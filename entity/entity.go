@@ -8,3 +8,8 @@ type Ticker struct {
 	Last float64 `json:"last,string"`
 	Vol  float64 `json:"vol,string"`
 }
+
+type Depth struct {
+	Asks [][]float64 `json:"asks,string"`
+	Bids [][]float64 `json:"bids,string"`
+}
