@@ -57,7 +57,7 @@ type API interface {
 }
 
 type APIImpl struct {
-	client *clientImpl
+	client client
 }
 
 type APIOption struct {
