@@ -9,6 +9,7 @@ import (
 )
 
 type client interface {
+	request(option *clientOption) ([]byte, error)
 }
 
 type clientImpl struct {
