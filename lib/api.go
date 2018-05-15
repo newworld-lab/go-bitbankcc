@@ -14,8 +14,10 @@ import (
 )
 
 const (
-	formatTicker = "/%s/ticker"
-	formatDepth  = "/%s/depth"
+	formatTicker          = "/%s/ticker"
+	formatDepth           = "/%s/depth"
+	formatTransactionsAll = "/%s/transactions"
+	formatTransactions    = "/%s/transactions/%s"
 )
 
 type baseResponse struct {
@@ -51,9 +53,17 @@ type depthResponse struct {
 	} `json:"data"`
 }
 
+type transactionsResponse struct {
+	baseResponse
+	Data struct {
+		Transactions []entity.Transaction `json:"transactions"`
+	} `json:"data"`
+}
+
 type API interface {
 	GetTicker(pair constant.TypePair) (*entity.Ticker, error)
 	GetDepth(pair constant.TypePair) (*entity.Depth, error)
+	GetTransactions(pair constant.TypePair, time *time.Time) (*entity.Transaction, error)
 }
 
 type APIImpl struct {
@@ -138,4 +148,62 @@ func (api *APIImpl) GetDepth(pair constant.TypePair, option *APIOption) (*entity
 	}
 
 	return &res.Data.Depth, nil
+}
+
+func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time, option *APIOption) ([]entity.Transaction, error) {
+	if api == nil {
+		return nil, errors.New("api is nil")
+	}
+
+	var path string
+	if t == nil {
+		path = fmt.Sprintf(formatTransactionsAll, pair)
+	} else {
+		fmt.Println(t.Format("20060102"))
+		path = fmt.Sprintf(formatTransactions, pair, t.Format("20060102"))
+	}
+	bytes, err := api.client.request(&clientOption{
+		method:  http.MethodGet,
+		path:    path,
+		timeout: option.GetTimeout(),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	tmp := new(struct {
+		baseResponse
+		Data struct {
+			Transactions []struct {
+				TransactionId int     `json:"transaction_id"`
+				Side          string  `json:"side"`
+				Price         float64 `json:"price,string"`
+				Amount        float64 `json:"amount,string"`
+				ExecutedAt    int64   `json:"executed_at"`
+			}
+		} `json:"data"`
+	})
+	json.Unmarshal(bytes, tmp)
+
+	res := new(transactionsResponse)
+
+	res.baseResponse = tmp.baseResponse
+	for _, transacion := range tmp.Data.Transactions {
+		res.Data.Transactions = append(res.Data.Transactions, entity.Transaction{
+			TransactionId: transacion.TransactionId,
+			Side:          transacion.Side,
+			Price:         transacion.Price,
+			Amount:        transacion.Amount,
+			ExecutedAt:    time.Unix(transacion.ExecutedAt/1000, transacion.ExecutedAt%1000*1000000),
+		})
+	}
+
+	err = tmp.parseError()
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Data.Transactions, nil
+
 }
