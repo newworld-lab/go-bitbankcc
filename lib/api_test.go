@@ -28,14 +28,26 @@ func TestGetTicker(t *testing.T) {
 	ticker, err := api.GetTicker(constant.PairBtcJpy, nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, ticker)
-	assert.Equal(t, float64(1020712), ticker.Buy)
+	assert.Equal(t, 1020712.0, ticker.Buy)
+	assert.Equal(t, 1020979.0, ticker.Sell)
+	assert.Equal(t, 1023889.0, ticker.High)
+	assert.Equal(t, 963930.0, ticker.Low)
+	assert.Equal(t, 1020984.0, ticker.Last)
+	assert.Equal(t, 2075.8257, ticker.Vol)
+	assert.Equal(t, 1524573765864, ticker.Timestamp)
 }
 
 func TestGetDepth(t *testing.T) {
-	client := &clientImpl{
-		endpoint:       "https://public.bitbank.cc",
-		defaultTimeout: time.Duration(5000 * time.Millisecond),
-	}
+	ctrl := gomock.NewController(t)
+	client := NewMockclient(ctrl)
+	client.EXPECT().request(&clientOption{
+		method:  http.MethodGet,
+		path:    fmt.Sprintf(formatDepth, constant.PairBtcJpy),
+		timeout: time.Duration(0),
+	}).Return(
+		[]byte(`{"success":1,"data":{"asks":[["964745","0.0004"],["964753","0.0010"]],"bids":[["964254","0.0060"],["964249","0.0200"]],"timestamp":1526387708186}}`),
+		nil,
+	)
 	api := &APIImpl{
 		client: client,
 	}
@@ -43,6 +55,7 @@ func TestGetDepth(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.NotNil(t, depth)
-	assert.NotEqual(t, 0, depth.Asks)
-	assert.NotEqual(t, 0, depth.Bids)
+	assert.Equal(t, []float64{964745.0, 0.0004}, depth.Asks[0])
+	assert.Equal(t, []float64{964254.0, 0.0060}, depth.Bids[0])
+	assert.Equal(t, 1526387708186, depth.Timestamp)
 }
