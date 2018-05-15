@@ -61,10 +61,26 @@ func TestGetDepth(t *testing.T) {
 }
 
 func TestGetTransactions(t *testing.T) {
-	client := &clientImpl{
-		endpoint:       "https://public.bitbank.cc",
-		defaultTimeout: time.Duration(50000 * time.Millisecond),
-	}
+	now := time.Now()
+	ctrl := gomock.NewController(t)
+	client := NewMockclient(ctrl)
+	client.EXPECT().request(&clientOption{
+		method:  http.MethodGet,
+		path:    fmt.Sprintf(formatTransactionsAll, constant.PairBtcJpy),
+		timeout: time.Duration(0),
+	}).Return(
+		[]byte(`{"success":1,"data":{"transactions":[{"transaction_id":10654992,"side":"sell","price":"962005","amount":"0.0100","executed_at":1526390858690},{"transaction_id":10654991,"side":"sell","price":"962005","amount":"0.0090","executed_at":1526390856716},{"transaction_id":10654990,"side":"sell","price":"962010","amount":"0.0060","executed_at":1526390856658},{"transaction_id":10654989,"side":"sell","price":"962020","amount":"0.0050","executed_at":1526390856596}]}}`),
+		nil,
+	)
+	client.EXPECT().request(&clientOption{
+		method:  http.MethodGet,
+		path:    fmt.Sprintf(formatTransactions, constant.PairBtcJpy, now.Format("20060102")),
+		timeout: time.Duration(0),
+	}).Return(
+		[]byte(`{"success":1,"data":{"transactions":[{"transaction_id":10507587,"side":"sell","price":"956290","amount":"0.0500","executed_at":1526256003017},{"transaction_id":10507588,"side":"sell","price":"956290","amount":"0.0453","executed_at":1526256003458}]}}`),
+		nil,
+	)
+
 	api := &APIImpl{
 		client: client,
 	}
@@ -78,7 +94,6 @@ func TestGetTransactions(t *testing.T) {
 	assert.NotEqual(t, 0, transactionsAll[0].Amount)
 	assert.NotEqual(t, 0, transactionsAll[0].ExecutedAt)
 
-	now := time.Now().Add(-24 * time.Hour)
 	transactions, err := api.GetTransactions(constant.PairBtcJpy, &now, nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, transactions[0])
