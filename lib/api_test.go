@@ -34,7 +34,6 @@ func TestGetTicker(t *testing.T) {
 	assert.Equal(t, 963930.0, ticker.Low)
 	assert.Equal(t, 1020984.0, ticker.Last)
 	assert.Equal(t, 2075.8257, ticker.Vol)
-	assert.Equal(t, 1524573765864, ticker.Timestamp)
 }
 
 func TestGetDepth(t *testing.T) {
@@ -57,7 +56,6 @@ func TestGetDepth(t *testing.T) {
 	assert.NotNil(t, depth)
 	assert.Equal(t, []float64{964745.0, 0.0004}, depth.Asks[0])
 	assert.Equal(t, []float64{964254.0, 0.0060}, depth.Bids[0])
-	assert.Equal(t, 1526387708186, depth.Timestamp)
 }
 
 func TestGetTransactions(t *testing.T) {
