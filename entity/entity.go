@@ -1,5 +1,7 @@
 package entity
 
+import "time"
+
 type Ticker struct {
 	Sell      float64 `json:"sell,string"`
 	Buy       float64 `json:"buy,string"`
@@ -14,4 +16,12 @@ type Depth struct {
 	Asks      [][]float64 `json:"asks,string"`
 	Bids      [][]float64 `json:"bids,string"`
 	Timestamp int         `json:"timestamp"`
+}
+
+type Transaction struct {
+	TransactionId int       `json:"transaction_id"`
+	Side          string    `json:"side"`
+	Price         float64   `json:"price,string"`
+	Amount        float64   `json:"amount,string"`
+	ExecutedAt    time.Time `json:"executed_at"`
 }

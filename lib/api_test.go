@@ -59,3 +59,32 @@ func TestGetDepth(t *testing.T) {
 	assert.Equal(t, []float64{964254.0, 0.0060}, depth.Bids[0])
 	assert.Equal(t, 1526387708186, depth.Timestamp)
 }
+
+func TestGetTransactions(t *testing.T) {
+	client := &clientImpl{
+		endpoint:       "https://public.bitbank.cc",
+		defaultTimeout: time.Duration(50000 * time.Millisecond),
+	}
+	api := &APIImpl{
+		client: client,
+	}
+
+	transactionsAll, err := api.GetTransactions(constant.PairBtcJpy, nil, nil)
+	assert.Nil(t, err)
+	assert.NotNil(t, transactionsAll[0])
+	assert.NotEqual(t, 0, transactionsAll[0].TransactionId)
+	assert.NotEqual(t, 0, transactionsAll[0].Side)
+	assert.NotEqual(t, 0, transactionsAll[0].Price)
+	assert.NotEqual(t, 0, transactionsAll[0].Amount)
+	assert.NotEqual(t, 0, transactionsAll[0].ExecutedAt)
+
+	now := time.Now().Add(-24 * time.Hour)
+	transactions, err := api.GetTransactions(constant.PairBtcJpy, &now, nil)
+	assert.Nil(t, err)
+	assert.NotNil(t, transactions[0])
+	assert.NotEqual(t, 0, transactions[0].TransactionId)
+	assert.NotEqual(t, 0, transactions[0].Side)
+	assert.NotEqual(t, 0, transactions[0].Price)
+	assert.NotEqual(t, 0, transactions[0].Amount)
+	assert.NotEqual(t, 0, transactions[0].ExecutedAt)
+}
