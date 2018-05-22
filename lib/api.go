@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/newworld-lab/go-bitbankcc/constant"
 	"github.com/newworld-lab/go-bitbankcc/entity"
-	"github.com/newworld-lab/go-bitbankcc/util"
 
 	"github.com/pkg/errors"
 )
@@ -39,27 +39,6 @@ func (res *baseResponse) parseError() error {
 	return nil
 }
 
-type tickerResponse struct {
-	baseResponse
-	Data struct {
-		entity.Ticker
-	} `json:"data"`
-}
-
-type depthResponse struct {
-	baseResponse
-	Data struct {
-		entity.Depth
-	} `json:"data"`
-}
-
-type transactionsResponse struct {
-	baseResponse
-	Data struct {
-		Transactions []entity.Transaction `json:"transactions"`
-	} `json:"data"`
-}
-
 type API interface {
 	GetTicker(pair constant.TypePair) (*entity.Ticker, error)
 	GetDepth(pair constant.TypePair) (*entity.Depth, error)
@@ -79,6 +58,13 @@ func (option *APIOption) GetTimeout() time.Duration {
 		return time.Duration(0)
 	}
 	return option.timeout
+}
+
+type tickerResponse struct {
+	baseResponse
+	Data struct {
+		entity.Ticker
+	} `json:"data"`
 }
 
 // GetTicker 通貨TypeからTicker取得
@@ -107,6 +93,43 @@ func (api *APIImpl) GetTicker(pair constant.TypePair, option *APIOption) (*entit
 	return &res.Data.Ticker, nil
 }
 
+type depth struct {
+	entity.Depth
+	Asks [][]string `json:"asks"`
+	Bids [][]string `json:"bids"`
+}
+
+type depthResponse struct {
+	baseResponse
+	Data struct {
+		depth
+	} `json:"data"`
+}
+
+func (d *depth) convert() entity.Depth {
+	asks, bids := make([][]float64, 0), make([][]float64, 0)
+	for _, ss := range d.Asks {
+		fs := make([]float64, 0)
+		for _, s := range ss {
+			f, _ := strconv.ParseFloat(s, 64)
+			fs = append(fs, f)
+		}
+		asks = append(asks, fs)
+	}
+	for _, ss := range d.Bids {
+		fs := make([]float64, 0)
+		for _, s := range ss {
+			f, _ := strconv.ParseFloat(s, 64)
+			fs = append(fs, f)
+		}
+		bids = append(bids, fs)
+	}
+	return entity.Depth{
+		Asks: asks,
+		Bids: bids,
+	}
+}
+
 // GetDepth 通貨TypeからDepth取得
 func (api *APIImpl) GetDepth(pair constant.TypePair, option *APIOption) (*entity.Depth, error) {
 	if api == nil {
@@ -123,31 +146,43 @@ func (api *APIImpl) GetDepth(pair constant.TypePair, option *APIOption) (*entity
 	}
 
 	// 配列をFloatにキャストするための仮struct
-	tmp := new(struct {
-		baseResponse
-		Data struct {
-			Asks []util.Strings `json:"asks"`
-			Bids []util.Strings `json:"bids"`
-		} `json:"data"`
-	})
-	json.Unmarshal(bytes, tmp)
-
 	res := new(depthResponse)
-	// resの中身をキャストした内容で書き換え
-	res.baseResponse = tmp.baseResponse
-	for _, strAsks := range tmp.Data.Asks {
-		res.Data.Asks = append(res.Data.Asks, strAsks.ToFloat64())
-	}
-	for _, strBids := range tmp.Data.Bids {
-		res.Data.Bids = append(res.Data.Bids, strBids.ToFloat64())
-	}
-
+	json.Unmarshal(bytes, res)
 	err = res.parseError()
 	if err != nil {
 		return nil, err
 	}
 
-	return &res.Data.Depth, nil
+	depth := res.Data.convert()
+	return &depth, nil
+}
+
+type transactionsResponse struct {
+	baseResponse
+	Data struct {
+		Transactions transactions `json:"transactions"`
+	} `json:"data"`
+}
+
+type transaction struct {
+	entity.Transaction
+	ExecutedAt int64 `json:"executed_at"`
+}
+
+type transactions []transaction
+
+func (ts transactions) convert() []entity.Transaction {
+	transactions := make([]entity.Transaction, 0)
+	for _, t := range ts {
+		transactions = append(transactions, entity.Transaction{
+			TransactionId: t.TransactionId,
+			Side:          t.Side,
+			Price:         t.Price,
+			Amount:        t.Amount,
+			ExecutedAt:    time.Unix(t.ExecutedAt/1000, t.ExecutedAt%1000*1000000),
+		})
+	}
+	return transactions
 }
 
 func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time, option *APIOption) ([]entity.Transaction, error) {
@@ -172,38 +207,13 @@ func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time, option
 		return nil, err
 	}
 
-	tmp := new(struct {
-		baseResponse
-		Data struct {
-			Transactions []struct {
-				TransactionId int     `json:"transaction_id"`
-				Side          string  `json:"side"`
-				Price         float64 `json:"price,string"`
-				Amount        float64 `json:"amount,string"`
-				ExecutedAt    int64   `json:"executed_at"`
-			}
-		} `json:"data"`
-	})
-	json.Unmarshal(bytes, tmp)
-
 	res := new(transactionsResponse)
+	json.Unmarshal(bytes, res)
 
-	res.baseResponse = tmp.baseResponse
-	for _, transacion := range tmp.Data.Transactions {
-		res.Data.Transactions = append(res.Data.Transactions, entity.Transaction{
-			TransactionId: transacion.TransactionId,
-			Side:          transacion.Side,
-			Price:         transacion.Price,
-			Amount:        transacion.Amount,
-			ExecutedAt:    time.Unix(transacion.ExecutedAt/1000, transacion.ExecutedAt%1000*1000000),
-		})
-	}
-
-	err = tmp.parseError()
+	err = res.parseError()
 	if err != nil {
 		return nil, err
 	}
 
-	return res.Data.Transactions, nil
-
+	return res.Data.Transactions.convert(), nil
 }
