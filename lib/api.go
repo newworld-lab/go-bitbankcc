@@ -43,6 +43,7 @@ type API interface {
 	GetTicker(pair constant.TypePair) (*entity.Ticker, error)
 	GetDepth(pair constant.TypePair) (*entity.Depth, error)
 	GetTransactions(pair constant.TypePair, time *time.Time) (*entity.Transaction, error)
+	GetAssets()
 }
 
 type APIImpl struct {
@@ -171,8 +172,8 @@ type transaction struct {
 
 type transactions []transaction
 
-func (ts transactions) convert() []entity.Transaction {
-	transactions := make([]entity.Transaction, 0)
+func (ts transactions) convert() entity.Transactions {
+	transactions := make(entity.Transactions, 0)
 	for _, t := range ts {
 		transactions = append(transactions, entity.Transaction{
 			TransactionId: t.TransactionId,
@@ -185,7 +186,7 @@ func (ts transactions) convert() []entity.Transaction {
 	return transactions
 }
 
-func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time, option *APIOption) ([]entity.Transaction, error) {
+func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time, option *APIOption) (entity.Transactions, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
 	}

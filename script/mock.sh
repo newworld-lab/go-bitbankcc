@@ -8,6 +8,7 @@ for path in `go list ./... | egrep -v 'vendor|_test|_mock'`; do
       from=${GOPATH}/src/${path}/${filename}.go
       to=${GOPATH}/src/${path}/${filename}_mock.go
       mockgen -source ${from} -destination ${to} -package ${package}
+      sed -i "" "2d" ${to}
       echo "${to}"
     fi
   done

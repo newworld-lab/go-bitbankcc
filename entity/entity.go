@@ -25,3 +25,5 @@ type Transaction struct {
 	Amount        float64   `json:"amount,string"`
 	ExecutedAt    time.Time `json:"executed_at"`
 }
+
+type Transactions []Transaction
