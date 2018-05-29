@@ -19,6 +19,7 @@ type clientOption struct {
 	endpoint string
 	method   string
 	path     string
+	header   http.Header
 }
 
 func (c *clientImpl) request(option *clientOption) ([]byte, error) {
@@ -35,6 +36,7 @@ func (c *clientImpl) request(option *clientOption) ([]byte, error) {
 		return nil, errors.WithStack(err)
 	}
 
+	req.Header = option.header
 	res, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -42,6 +44,7 @@ func (c *clientImpl) request(option *clientOption) ([]byte, error) {
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
+
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
