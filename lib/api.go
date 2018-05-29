@@ -48,17 +48,26 @@ type API interface {
 
 type APIImpl struct {
 	client client
+	option *APIOption
+}
+
+func NewApi(option *APIOption) *APIImpl {
+	timeout := 5000 * time.Millisecond
+	if option != nil && option.timeout != 0 {
+		timeout = option.timeout
+	}
+	return &APIImpl{
+		client: &clientImpl{
+			httpClient: http.Client{
+				Timeout: timeout,
+			},
+		},
+		option: option,
+	}
 }
 
 type APIOption struct {
 	timeout time.Duration
-}
-
-func (option *APIOption) GetTimeout() time.Duration {
-	if option == nil {
-		return time.Duration(0)
-	}
-	return option.timeout
 }
 
 type tickerResponse struct {
@@ -69,15 +78,15 @@ type tickerResponse struct {
 }
 
 // GetTicker 通貨TypeからTicker取得
-func (api *APIImpl) GetTicker(pair constant.TypePair, option *APIOption) (*entity.Ticker, error) {
+func (api *APIImpl) GetTicker(pair constant.TypePair) (*entity.Ticker, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
 	}
 
 	bytes, err := api.client.request(&clientOption{
-		method:  http.MethodGet,
-		path:    fmt.Sprintf(formatTicker, pair),
-		timeout: option.GetTimeout(),
+		endpoint: constant.PublicApiEndpoint,
+		method:   http.MethodGet,
+		path:     fmt.Sprintf(formatTicker, pair),
 	})
 	if err != nil {
 		return nil, err
@@ -132,15 +141,15 @@ func (d *depth) convert() entity.Depth {
 }
 
 // GetDepth 通貨TypeからDepth取得
-func (api *APIImpl) GetDepth(pair constant.TypePair, option *APIOption) (*entity.Depth, error) {
+func (api *APIImpl) GetDepth(pair constant.TypePair) (*entity.Depth, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
 	}
 
 	bytes, err := api.client.request(&clientOption{
-		method:  http.MethodGet,
-		path:    fmt.Sprintf(formatDepth, pair),
-		timeout: option.GetTimeout(),
+		endpoint: constant.PublicApiEndpoint,
+		method:   http.MethodGet,
+		path:     fmt.Sprintf(formatDepth, pair),
 	})
 	if err != nil {
 		return nil, err
@@ -186,7 +195,7 @@ func (ts transactions) convert() entity.Transactions {
 	return transactions
 }
 
-func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time, option *APIOption) (entity.Transactions, error) {
+func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time) (entity.Transactions, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
 	}
@@ -199,9 +208,9 @@ func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time, option
 		path = fmt.Sprintf(formatTransactions, pair, t.Format("20060102"))
 	}
 	bytes, err := api.client.request(&clientOption{
-		method:  http.MethodGet,
-		path:    path,
-		timeout: option.GetTimeout(),
+		endpoint: constant.PublicApiEndpoint,
+		method:   http.MethodGet,
+		path:     path,
 	})
 
 	if err != nil {
