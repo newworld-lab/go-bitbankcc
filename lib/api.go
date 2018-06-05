@@ -79,7 +79,6 @@ type tickerResponse struct {
 	} `json:"data"`
 }
 
-// GetTicker 通貨TypeからTicker取得
 func (api *APIImpl) GetTicker(pair constant.TypePair) (*entity.Ticker, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
@@ -142,7 +141,6 @@ func (d *depth) convert() entity.Depth {
 	}
 }
 
-// GetDepth 通貨TypeからDepth取得
 func (api *APIImpl) GetDepth(pair constant.TypePair) (*entity.Depth, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
@@ -157,7 +155,6 @@ func (api *APIImpl) GetDepth(pair constant.TypePair) (*entity.Depth, error) {
 		return nil, err
 	}
 
-	// 配列をFloatにキャストするための仮struct
 	res := new(depthResponse)
 	json.Unmarshal(bytes, res)
 	err = res.parseError()
@@ -238,7 +235,7 @@ type candlestickResponse struct {
 
 type candlestick []struct {
 	entity.CandlestickItem
-	Ohlcv [][]interface{} `json:"ohlcv"` // [][]だったのを[]にしてみる
+	Ohlcv [][]interface{} `json:"ohlcv"`
 }
 
 func (c candlestick) convert() entity.Candlestick {
