@@ -18,6 +18,7 @@ const (
 	formatDepth           = "/%s/depth"
 	formatTransactionsAll = "/%s/transactions"
 	formatTransactions    = "/%s/transactions/%s"
+	formatCandlestick     = "/%s/candlestick/%s/%s"
 )
 
 type baseResponse struct {
@@ -43,6 +44,7 @@ type API interface {
 	GetTicker(pair constant.TypePair) (*entity.Ticker, error)
 	GetDepth(pair constant.TypePair) (*entity.Depth, error)
 	GetTransactions(pair constant.TypePair, time *time.Time) (*entity.Transaction, error)
+	GetCandlestick(pair constant.TypePair, candle constant.TypeCandle, time time.Time) (entity.Candlestick, error)
 	GetAssets()
 }
 
@@ -204,7 +206,6 @@ func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time) (entit
 	if t == nil {
 		path = fmt.Sprintf(formatTransactionsAll, pair)
 	} else {
-		fmt.Println(t.Format("20060102"))
 		path = fmt.Sprintf(formatTransactions, pair, t.Format("20060102"))
 	}
 	bytes, err := api.client.request(&clientOption{
@@ -226,4 +227,69 @@ func (api *APIImpl) GetTransactions(pair constant.TypePair, t *time.Time) (entit
 	}
 
 	return res.Data.Transactions.convert(), nil
+}
+
+type candlestickResponse struct {
+	baseResponse
+	Data struct {
+		Candlestick candlestick `json:"candlestick"`
+	} `json:"data"`
+}
+
+type candlestick []struct {
+	entity.CandlestickItem
+	Ohlcv [][]interface{} `json:"ohlcv"` // [][]だったのを[]にしてみる
+}
+
+func (c candlestick) convert() entity.Candlestick {
+
+	candlestick := make(entity.Candlestick, 0)
+	for _, i := range c {
+		candlestickItem := entity.CandlestickItem{
+			Type: i.Type,
+		}
+		for _, item := range i.Ohlcv {
+			ohlcvItem := entity.OhlcvItem{}
+			ohlcvItem.Open, _ = strconv.ParseFloat(item[0].(string), 64)
+			ohlcvItem.High, _ = strconv.ParseFloat(item[1].(string), 64)
+			ohlcvItem.Low, _ = strconv.ParseFloat(item[2].(string), 64)
+			ohlcvItem.Close, _ = strconv.ParseFloat(item[3].(string), 64)
+			ohlcvItem.Volume, _ = strconv.ParseFloat(item[4].(string), 64)
+			intDate := int64(item[5].(float64))
+			ohlcvItem.Date = time.Unix(intDate/1000, intDate%1000*1000000)
+			candlestickItem.Ohlcv = append(candlestickItem.Ohlcv, ohlcvItem)
+		}
+		candlestick = append(candlestick, candlestickItem)
+	}
+	return candlestick
+}
+
+func (api *APIImpl) GetCandlestick(pair constant.TypePair, candle constant.TypeCandle, t time.Time) (entity.Candlestick, error) {
+
+	if api == nil {
+		return nil, errors.New("api is nil")
+	}
+
+	var path string
+
+	path = fmt.Sprintf(formatCandlestick, pair, candle, t.Format("20060102"))
+	bytes, err := api.client.request(&clientOption{
+		endpoint: constant.PublicApiEndpoint,
+		method:   http.MethodGet,
+		path:     path,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	res := new(candlestickResponse)
+	json.Unmarshal(bytes, res)
+
+	err = res.parseError()
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Data.Candlestick.convert(), nil
 }
