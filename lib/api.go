@@ -350,17 +350,10 @@ func (api *APIImpl) GetAssets() (entity.Assets, error) {
 	}
 
 	path := formatAssets
-	accessNonce := api.createAccessNonce()
-	mac := hmac.New(sha256.New, []byte(*api.option.ApiSecret))
-	_, err := mac.Write([]byte(fmt.Sprintf(formatAccessSignature, accessNonce, path, "")))
+	header, err := api.createCertificationHeader(path)
 	if err != nil {
-		return nil, errors.Cause(err)
+		return nil, err
 	}
-	accessSignature := hex.EncodeToString(mac.Sum(nil))
-	header := make(http.Header)
-	header["ACCESS-KEY"] = []string{*api.option.ApiKey}
-	header["ACCESS-NONCE"] = []string{strconv.Itoa(accessNonce)}
-	header["ACCESS-SIGNATURE"] = []string{accessSignature}
 
 	bytes, err := api.client.request(&clientOption{
 		endpoint: constant.PrivateApiEndpoint,
@@ -382,4 +375,19 @@ func (api *APIImpl) GetAssets() (entity.Assets, error) {
 	}
 
 	return res.Data.Assets.convert(), nil
+}
+
+func (api *APIImpl) createCertificationHeader(path string) (http.Header, error) {
+	accessNonce := api.createAccessNonce()
+	mac := hmac.New(sha256.New, []byte(*api.option.ApiSecret))
+	_, err := mac.Write([]byte(fmt.Sprintf(formatAccessSignature, accessNonce, path, "")))
+	if err != nil {
+		return nil, errors.Cause(err)
+	}
+	accessSignature := hex.EncodeToString(mac.Sum(nil))
+	header := make(http.Header)
+	header["ACCESS-KEY"] = []string{*api.option.ApiKey}
+	header["ACCESS-NONCE"] = []string{strconv.Itoa(accessNonce)}
+	header["ACCESS-SIGNATURE"] = []string{accessSignature}
+	return header, nil
 }
