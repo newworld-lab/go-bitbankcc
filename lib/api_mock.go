@@ -61,9 +61,9 @@ func (mr *MockAPIMockRecorder) GetDepth(pair interface{}) *gomock.Call {
 }
 
 // GetTransactions mocks base method
-func (m *MockAPI) GetTransactions(pair constant.TypePair, time *time.Time) (*entity.Transaction, error) {
+func (m *MockAPI) GetTransactions(pair constant.TypePair, time *time.Time) (entity.Transactions, error) {
 	ret := m.ctrl.Call(m, "GetTransactions", pair, time)
-	ret0, _ := ret[0].(*entity.Transaction)
+	ret0, _ := ret[0].(entity.Transactions)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
