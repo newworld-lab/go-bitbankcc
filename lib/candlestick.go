@@ -61,7 +61,7 @@ func (c candlestick) convert() entity.Candlestick {
 	return candlestick
 }
 
-func (api *APIImpl) GetCandlestick(pair TypePair, candle TypeCandle, t time.Time) (entity.Candlestick, error) {
+func (api *APIImpl) GetCandlestick(pair entity.TypePair, candle TypeCandle, t time.Time) (entity.Candlestick, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
 	}

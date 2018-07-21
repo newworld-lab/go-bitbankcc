@@ -47,7 +47,7 @@ func (d *depth) convert() entity.Depth {
 	}
 }
 
-func (api *APIImpl) GetDepth(pair TypePair) (*entity.Depth, error) {
+func (api *APIImpl) GetDepth(pair entity.TypePair) (*entity.Depth, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
 	}
