@@ -5,7 +5,6 @@ package lib
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	constant "github.com/newworld-lab/go-bitbankcc/constant"
 	entity "github.com/newworld-lab/go-bitbankcc/entity"
 	reflect "reflect"
 	time "time"
@@ -35,7 +34,7 @@ func (m *MockAPI) EXPECT() *MockAPIMockRecorder {
 }
 
 // GetTicker mocks base method
-func (m *MockAPI) GetTicker(pair constant.TypePair) (*entity.Ticker, error) {
+func (m *MockAPI) GetTicker(pair TypePair) (*entity.Ticker, error) {
 	ret := m.ctrl.Call(m, "GetTicker", pair)
 	ret0, _ := ret[0].(*entity.Ticker)
 	ret1, _ := ret[1].(error)
@@ -48,7 +47,7 @@ func (mr *MockAPIMockRecorder) GetTicker(pair interface{}) *gomock.Call {
 }
 
 // GetDepth mocks base method
-func (m *MockAPI) GetDepth(pair constant.TypePair) (*entity.Depth, error) {
+func (m *MockAPI) GetDepth(pair TypePair) (*entity.Depth, error) {
 	ret := m.ctrl.Call(m, "GetDepth", pair)
 	ret0, _ := ret[0].(*entity.Depth)
 	ret1, _ := ret[1].(error)
@@ -61,7 +60,7 @@ func (mr *MockAPIMockRecorder) GetDepth(pair interface{}) *gomock.Call {
 }
 
 // GetTransactions mocks base method
-func (m *MockAPI) GetTransactions(pair constant.TypePair, time *time.Time) (*entity.Transaction, error) {
+func (m *MockAPI) GetTransactions(pair TypePair, time *time.Time) (*entity.Transaction, error) {
 	ret := m.ctrl.Call(m, "GetTransactions", pair, time)
 	ret0, _ := ret[0].(*entity.Transaction)
 	ret1, _ := ret[1].(error)
@@ -74,7 +73,7 @@ func (mr *MockAPIMockRecorder) GetTransactions(pair, time interface{}) *gomock.C
 }
 
 // GetCandlestick mocks base method
-func (m *MockAPI) GetCandlestick(pair constant.TypePair, candle constant.TypeCandle, time time.Time) (entity.Candlestick, error) {
+func (m *MockAPI) GetCandlestick(pair TypePair, candle TypeCandle, time time.Time) (entity.Candlestick, error) {
 	ret := m.ctrl.Call(m, "GetCandlestick", pair, candle, time)
 	ret0, _ := ret[0].(entity.Candlestick)
 	ret1, _ := ret[1].(error)
