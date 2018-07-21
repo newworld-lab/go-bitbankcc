@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"bytes"
 	"io/ioutil"
 	"net/http"
 
@@ -20,6 +21,7 @@ type clientOption struct {
 	method   string
 	path     string
 	header   http.Header
+	body     []byte
 }
 
 func (c *clientImpl) request(option *clientOption) ([]byte, error) {
@@ -31,12 +33,13 @@ func (c *clientImpl) request(option *clientOption) ([]byte, error) {
 	}
 
 	url := option.endpoint + string(option.path)
-	req, err := http.NewRequest(option.method, url, nil)
+	req, err := http.NewRequest(option.method, url, bytes.NewReader(option.body))
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
 	req.Header = option.header
+
 	res, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, errors.WithStack(err)
