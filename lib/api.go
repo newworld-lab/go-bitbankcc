@@ -28,6 +28,11 @@ const (
 )
 
 const (
+	publicApiEndpoint  = "https://public.bitbank.cc"
+	privateApiEndpoint = "https://api.bitbank.cc"
+)
+
+const (
 	formatTicker          = "/%s/ticker"
 	formatDepth           = "/%s/depth"
 	formatTransactionsAll = "/%s/transactions"

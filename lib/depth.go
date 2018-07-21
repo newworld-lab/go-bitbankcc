@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	constant "github.com/newworld-lab/go-bitbankcc/constant"
 	entity "github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/pkg/errors"
 )
@@ -54,7 +53,7 @@ func (api *APIImpl) GetDepth(pair TypePair) (*entity.Depth, error) {
 	}
 
 	bytes, err := api.client.request(&clientOption{
-		endpoint: constant.PublicApiEndpoint,
+		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
 		path:     fmt.Sprintf(formatDepth, pair),
 	})

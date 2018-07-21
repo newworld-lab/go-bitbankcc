@@ -6,7 +6,6 @@ import (
 	"net/http"
 	time "time"
 
-	constant "github.com/newworld-lab/go-bitbankcc/constant"
 	entity "github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/pkg/errors"
 )
@@ -51,7 +50,7 @@ func (api *APIImpl) GetTransactions(pair TypePair, t *time.Time) (entity.Transac
 		path = fmt.Sprintf(formatTransactions, pair, t.Format("20060102"))
 	}
 	bytes, err := api.client.request(&clientOption{
-		endpoint: constant.PublicApiEndpoint,
+		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
 		path:     path,
 	})

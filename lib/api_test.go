@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/newworld-lab/go-bitbankcc/constant"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +14,7 @@ func TestGetTicker(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	client := NewMockclient(ctrl)
 	client.EXPECT().request(&clientOption{
-		endpoint: constant.PublicApiEndpoint,
+		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
 		path:     fmt.Sprintf(formatTicker, PairBtcJpy),
 	}).Return(
@@ -40,7 +39,7 @@ func TestGetDepth(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	client := NewMockclient(ctrl)
 	client.EXPECT().request(&clientOption{
-		endpoint: constant.PublicApiEndpoint,
+		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
 		path:     fmt.Sprintf(formatDepth, PairBtcJpy),
 	}).Return(
@@ -63,7 +62,7 @@ func TestGetTransactions(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	client := NewMockclient(ctrl)
 	client.EXPECT().request(&clientOption{
-		endpoint: constant.PublicApiEndpoint,
+		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
 		path:     fmt.Sprintf(formatTransactionsAll, PairBtcJpy),
 	}).Return(
@@ -71,7 +70,7 @@ func TestGetTransactions(t *testing.T) {
 		nil,
 	)
 	client.EXPECT().request(&clientOption{
-		endpoint: constant.PublicApiEndpoint,
+		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
 		path:     fmt.Sprintf(formatTransactions, PairBtcJpy, now.Format("20060102")),
 	}).Return(
@@ -107,7 +106,7 @@ func TestGetCandlestick(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	client := NewMockclient(ctrl)
 	client.EXPECT().request(&clientOption{
-		endpoint: constant.PublicApiEndpoint,
+		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
 		path:     fmt.Sprintf(formatCandlestick, PairBtcJpy, FiveMinutes, now.Format("20060102")),
 	}).Return(
@@ -141,7 +140,7 @@ func TestGetAssets(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	client := NewMockclient(ctrl)
 	client.EXPECT().request(&clientOption{
-		endpoint: constant.PrivateApiEndpoint,
+		endpoint: privateApiEndpoint,
 		method:   http.MethodGet,
 		path:     "/v1/user/assets",
 		header: http.Header{

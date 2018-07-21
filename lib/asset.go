@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-	constant "github.com/newworld-lab/go-bitbankcc/constant"
 	entity "github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/pkg/errors"
 )
@@ -60,7 +59,7 @@ func (api *APIImpl) GetAssets() (entity.Assets, error) {
 	}
 
 	bytes, err := api.client.request(&clientOption{
-		endpoint: constant.PrivateApiEndpoint,
+		endpoint: privateApiEndpoint,
 		method:   http.MethodGet,
 		path:     path,
 		header:   header,

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	constant "github.com/newworld-lab/go-bitbankcc/constant"
 	entity "github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/pkg/errors"
 )
@@ -23,7 +22,7 @@ func (api *APIImpl) GetTicker(pair TypePair) (*entity.Ticker, error) {
 	}
 
 	bytes, err := api.client.request(&clientOption{
-		endpoint: constant.PublicApiEndpoint,
+		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
 		path:     fmt.Sprintf(formatTicker, pair),
 	})
