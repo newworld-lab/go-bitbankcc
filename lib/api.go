@@ -50,7 +50,7 @@ type API interface {
 	GetDepth(pair constant.TypePair) (*entity.Depth, error)
 	GetTransactions(pair constant.TypePair, time *time.Time) (*entity.Transaction, error)
 	GetCandlestick(pair constant.TypePair, candle constant.TypeCandle, time time.Time) (entity.Candlestick, error)
-	GetAssets()
+	GetAssets() (entity.Assets, error)
 }
 
 type APIImpl struct {

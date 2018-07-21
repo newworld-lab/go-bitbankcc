@@ -61,9 +61,9 @@ func (mr *MockAPIMockRecorder) GetDepth(pair interface{}) *gomock.Call {
 }
 
 // GetTransactions mocks base method
-func (m *MockAPI) GetTransactions(pair constant.TypePair, time *time.Time) (entity.Transactions, error) {
+func (m *MockAPI) GetTransactions(pair constant.TypePair, time *time.Time) (*entity.Transaction, error) {
 	ret := m.ctrl.Call(m, "GetTransactions", pair, time)
-	ret0, _ := ret[0].(entity.Transactions)
+	ret0, _ := ret[0].(*entity.Transaction)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -73,9 +73,25 @@ func (mr *MockAPIMockRecorder) GetTransactions(pair, time interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactions", reflect.TypeOf((*MockAPI)(nil).GetTransactions), pair, time)
 }
 
+// GetCandlestick mocks base method
+func (m *MockAPI) GetCandlestick(pair constant.TypePair, candle constant.TypeCandle, time time.Time) (entity.Candlestick, error) {
+	ret := m.ctrl.Call(m, "GetCandlestick", pair, candle, time)
+	ret0, _ := ret[0].(entity.Candlestick)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCandlestick indicates an expected call of GetCandlestick
+func (mr *MockAPIMockRecorder) GetCandlestick(pair, candle, time interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCandlestick", reflect.TypeOf((*MockAPI)(nil).GetCandlestick), pair, candle, time)
+}
+
 // GetAssets mocks base method
-func (m *MockAPI) GetAssets() {
-	m.ctrl.Call(m, "GetAssets")
+func (m *MockAPI) GetAssets() (entity.Assets, error) {
+	ret := m.ctrl.Call(m, "GetAssets")
+	ret0, _ := ret[0].(entity.Assets)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetAssets indicates an expected call of GetAssets
