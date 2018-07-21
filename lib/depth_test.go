@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
+	entity "github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +16,7 @@ func TestGetDepth(t *testing.T) {
 	client.EXPECT().request(&clientOption{
 		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
-		path:     fmt.Sprintf(formatDepth, PairBtcJpy),
+		path:     fmt.Sprintf(formatDepth, entity.PairBtcJpy),
 	}).Return(
 		[]byte(`{"success":1,"data":{"asks":[["964745","0.0004"],["964753","0.0010"]],"bids":[["964254","0.0060"],["964249","0.0200"]],"timestamp":1526387708186}}`),
 		nil,
@@ -23,7 +24,7 @@ func TestGetDepth(t *testing.T) {
 	api := &APIImpl{
 		client: client,
 	}
-	depth, err := api.GetDepth(PairBtcJpy)
+	depth, err := api.GetDepth(entity.PairBtcJpy)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, depth)

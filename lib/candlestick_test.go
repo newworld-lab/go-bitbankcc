@@ -7,6 +7,7 @@ import (
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
+	entity "github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,14 +18,14 @@ func TestGetCandlestick(t *testing.T) {
 	client.EXPECT().request(&clientOption{
 		endpoint: publicApiEndpoint,
 		method:   http.MethodGet,
-		path:     fmt.Sprintf(formatCandlestick, PairBtcJpy, FiveMinutes, now.Format("20060102")),
+		path:     fmt.Sprintf(formatCandlestick, entity.PairBtcJpy, FiveMinutes, now.Format("20060102")),
 	}).Return(
 		[]byte(`{"success":1,"data":{"candlestick":[{"type":"5min","ohlcv":[["944912","948000","944155","946404","5.2297",1526860800000],["946001","948200","945336","946845","6.7225",1526861100000]]},{"type":"5min","ohlcv":[["944912","948000","944155","946404","5.2297",1526860800000],["946001","948200","945336","946845","6.7225",1526861100000]]}],"timestamp":1526947199659}}`),
 		nil,
 	)
 	api := NewApi(nil)
 	api.client = client
-	candlestick, err := api.GetCandlestick(PairBtcJpy, FiveMinutes, now)
+	candlestick, err := api.GetCandlestick(entity.PairBtcJpy, FiveMinutes, now)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, candlestick)

@@ -38,7 +38,7 @@ func (ts transactions) convert() entity.Transactions {
 	return transactions
 }
 
-func (api *APIImpl) GetTransactions(pair TypePair, t *time.Time) (entity.Transactions, error) {
+func (api *APIImpl) GetTransactions(pair entity.TypePair, t *time.Time) (entity.Transactions, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
 	}

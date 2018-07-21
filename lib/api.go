@@ -14,19 +14,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type TypePair string
-
-const (
-	PairBtcJpy  TypePair = "btc_jpy"
-	PairXrpJpy  TypePair = "xrp_jpy"
-	PairLtcBtc  TypePair = "ltc_btc"
-	PairEthBtc  TypePair = "eth_btc"
-	PairMonaJpy TypePair = "mona_jpy"
-	PairMonaBtc TypePair = "mona_btc"
-	PairBccJpy  TypePair = "bcc_jpy"
-	PairBccBtc  TypePair = "bcc_btc"
-)
-
 const (
 	publicApiEndpoint  = "https://public.bitbank.cc"
 	privateApiEndpoint = "https://api.bitbank.cc"
@@ -62,10 +49,10 @@ func (res *baseResponse) parseError() error {
 }
 
 type API interface {
-	GetTicker(pair TypePair) (*entity.Ticker, error)
-	GetDepth(pair TypePair) (*entity.Depth, error)
-	GetTransactions(pair TypePair, time *time.Time) (*entity.Transaction, error)
-	GetCandlestick(pair TypePair, candle TypeCandle, time time.Time) (entity.Candlestick, error)
+	GetTicker(pair entity.TypePair) (*entity.Ticker, error)
+	GetDepth(pair entity.TypePair) (*entity.Depth, error)
+	GetTransactions(pair entity.TypePair, time *time.Time) (*entity.Transaction, error)
+	GetCandlestick(pair entity.TypePair, candle TypeCandle, time time.Time) (entity.Candlestick, error)
 	GetAssets() (entity.Assets, error)
 }
 

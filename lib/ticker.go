@@ -16,7 +16,7 @@ type tickerResponse struct {
 	} `json:"data"`
 }
 
-func (api *APIImpl) GetTicker(pair TypePair) (*entity.Ticker, error) {
+func (api *APIImpl) GetTicker(pair entity.TypePair) (*entity.Ticker, error) {
 	if api == nil {
 		return nil, errors.New("api is nil")
 	}
