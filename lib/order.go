@@ -11,18 +11,17 @@ import (
 
 type orderResponse struct {
 	baseResponse
-	Data struct {
-		Order order
-	} `json:"data"`
+	Data order `json:"data"`
 }
 
 type order struct {
+	baseData
 	entity.Order
 	OrderedAt  int64  `json:"ordered_at"`
 	ExecutedAt *int64 `json:"executed_at,omitempty"`
 }
 
-func (o order) convert() *entity.Order {
+func (o *order) convert() *entity.Order {
 	var (
 		orderedAt  time.Time
 		executedAt *time.Time
@@ -40,6 +39,7 @@ func (o order) convert() *entity.Order {
 		StartAmount:     o.StartAmount,
 		RemainingAmount: o.RemainingAmount,
 		ExecutedAmount:  o.ExecutedAmount,
+		Price:           o.Price,
 		AveragePrice:    o.AveragePrice,
 		OrderedAt:       orderedAt,
 		ExecutedAt:      executedAt,
@@ -56,23 +56,27 @@ func (api *APIImpl) PostOrder(params entity.PostOrderParams) (*entity.Order, err
 		return nil, errors.New("ApiKey or ApiSecret is nil")
 	}
 	path := formatOrder
-	header, err := api.createCertificationHeader(path)
-	if err != nil {
-		return nil, err
-	}
 
 	body, err := json.Marshal(params)
 	if err != nil {
 		return nil, err
 	}
 
+	header, err := api.createCertificationHeader(string(body))
+	if err != nil {
+		return nil, err
+	}
+
 	bytes, err := api.client.request(&clientOption{
 		endpoint: privateApiEndpoint,
-		method:   http.MethodGet,
+		method:   http.MethodPost,
 		path:     path,
 		header:   header,
 		body:     body,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	res := new(orderResponse)
 	err = json.Unmarshal(bytes, res)
@@ -80,10 +84,9 @@ func (api *APIImpl) PostOrder(params entity.PostOrderParams) (*entity.Order, err
 		return nil, err
 	}
 
-	err = res.parseError()
-	if err != nil {
-		return nil, err
+	if res.Success != 1 {
+		return nil, errors.Errorf("api error code=%d", res.Data.Code)
 	}
 
-	return res.Data.Order.convert(), nil
+	return res.Data.convert(), nil
 }

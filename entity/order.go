@@ -36,6 +36,7 @@ type Order struct {
 	StartAmount     float64         `json:"start_amount,string"`
 	RemainingAmount float64         `json:"remaining_amount,string"`
 	ExecutedAmount  float64         `json:"executed_amount,string"`
+	Price           float64         `json:"price,string"`
 	AveragePrice    float64         `json:"average_price,string"`
 	OrderedAt       time.Time       `json:"ordered_at"`
 	ExecutedAt      *time.Time      `json:"executed_at,omitempty"`
@@ -45,7 +46,7 @@ type Order struct {
 type PostOrderParams struct {
 	Pair   TypePair      `json:"pair"`
 	Amount float64       `json:"amount,string"`
-	Price  float64       `json:"price,string"`
+	Price  int           `json:"price"`
 	Side   TypeOrderSide `json:"side"`
 	Type   TypeOrderType `json:"type"`
 }
