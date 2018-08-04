@@ -10,6 +10,48 @@ import (
 	entity "github.com/newworld-lab/go-bitbankcc/entity"
 )
 
+func TestGetOrder(t *testing.T) {
+	key := "key"
+	secret := "secret"
+	ctrl := gomock.NewController(t)
+	client := NewMockclient(ctrl)
+
+	client.EXPECT().request(&clientOption{
+		endpoint: privateApiEndpoint,
+		method:   http.MethodGet,
+		path:     "/v1/user/spot/order?order_id=444134158&pair=btc_jpy",
+		header: http.Header{
+			"ACCESS-KEY":       {"key"},
+			"ACCESS-NONCE":     {"1531539009441"},
+			"ACCESS-SIGNATURE": {"57e70c47770a82a6049eba39e73366e28e9d86a1177ccbcb4676b65c3fda3100"},
+		},
+	}).Return(
+		[]byte(`{"success": 1,"data": {"order_id": 444134158,"pair": "btc_jpy","side": "buy","type": "limit","start_amount": "0.00100000","remaining_amount": "0.00100000","executed_amount": "0.00000000","price": "1000.0000","average_price": "0.0000","ordered_at": 1533044000829,"status": "UNFILLED"}}`),
+		nil,
+	)
+
+	api := &APIImpl{
+		client: client,
+		option: &APIOption{
+			ApiKey:    &key,
+			ApiSecret: &secret,
+		},
+		createAccessNonce: func() int {
+			return 1531539009441
+		},
+	}
+
+	order, err := api.GetOrder(entity.GetOrderParams{
+		Pair:    entity.PairBtcJpy,
+		OrderID: "444134158",
+	})
+	assert.Nil(t, err)
+	assert.NotNil(t, order)
+	assert.Equal(t, 444134158, order.OrderID)
+	assert.Equal(t, 0.001, order.StartAmount)
+	assert.Equal(t, 1000.0, order.Price)
+}
+
 func TestPostOrder(t *testing.T) {
 	key := "key"
 	secret := "secret"

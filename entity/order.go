@@ -43,6 +43,11 @@ type Order struct {
 	Status          TypeOrderStatus `json:"status"`
 }
 
+type GetOrderParams struct {
+	Pair    TypePair `json:"pair"`
+	OrderID string   `json:"order_id"`
+}
+
 type PostOrderParams struct {
 	Pair   TypePair      `json:"pair"`
 	Amount float64       `json:"amount,string"`
