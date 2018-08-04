@@ -33,7 +33,6 @@ func (c *clientImpl) request(option *clientOption) ([]byte, error) {
 	}
 
 	url := option.endpoint + string(option.path)
-
 	req, err := http.NewRequest(option.method, url, bytes.NewReader(option.body))
 	if err != nil {
 		return nil, errors.WithStack(err)
