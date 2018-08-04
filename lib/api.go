@@ -27,14 +27,17 @@ const (
 	formatCandlestick     = "/%s/candlestick/%s/%s"
 	formatAssets          = "/v1/user/assets"
 	formatTrades          = "v1/user/spot/trade_history"
+	formatOrder           = "/v1/user/spot/order"
 	formatAccessSignature = "%d%s%s"
 )
 
+type baseData struct {
+	Code int `json:"code"`
+}
+
 type baseResponse struct {
-	Success int `json:"success"`
-	Data    struct {
-		Code int `json:"code"`
-	} `json:"data"`
+	Success int      `json:"success"`
+	Data    baseData `json:"data"`
 }
 
 func (res *baseResponse) parseError() error {
@@ -92,10 +95,10 @@ type APIOption struct {
 	ApiSecret *string
 }
 
-func (api *APIImpl) createCertificationHeader(path string) (http.Header, error) {
+func (api *APIImpl) createCertificationHeader(str string) (http.Header, error) {
 	accessNonce := api.createAccessNonce()
 	mac := hmac.New(sha256.New, []byte(*api.option.ApiSecret))
-	_, err := mac.Write([]byte(fmt.Sprintf(formatAccessSignature, accessNonce, path, "")))
+	_, err := mac.Write([]byte(fmt.Sprintf(formatAccessSignature, accessNonce, str, "")))
 	if err != nil {
 		return nil, errors.Cause(err)
 	}
