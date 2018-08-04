@@ -1,5 +1,7 @@
 package entity
 
+import "time"
+
 type Trades []Trade
 
 type TypeTradeOrder string
@@ -12,6 +14,7 @@ const (
 type Trade struct {
 	TradeId        int    `json:"trade_id"`
 	Pair           string `json:"pair"`
+	OrderId        int    `json:"order_id"`
 	Side           string `json:"side"`
 	Type           string `json:"type"`
 	Amount         string `json:"amount"`
@@ -26,7 +29,7 @@ type TradeParams struct {
 	Pair    TypePair       `json:"pair"`
 	Count   float64        `json:"count"`
 	OrderId float64        `json:"order_id"`
-	Since   float64        `json:"since"`
-	End     float64        `json:"end"`
+	Since   *time.Time     `json:"since"`
+	End     *time.Time     `json:"end"`
 	Order   TypeTradeOrder `json:"order"`
 }

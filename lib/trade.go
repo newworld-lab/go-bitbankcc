@@ -29,6 +29,7 @@ func (tr trades) convert() entity.Trades {
 		trades = append(trades, entity.Trade{
 			TradeId:        t.Trade.TradeId,
 			Pair:           t.Trade.Pair,
+			OrderId:        t.Trade.OrderId,
 			Side:           t.Trade.Side,
 			Type:           t.Trade.Type,
 			Amount:         t.Trade.Amount,
@@ -60,10 +61,6 @@ func (api *APIImpl) GetTrades(params entity.TradeParams) (entity.Trades, error) 
 	url := &url.URL{}
 	query := url.Query()
 
-	if params.Pair != "" || params.Count != 0 || params.OrderId != 0 || params.Since != 0 || params.End != 0 || params.Order != "" {
-		path = path + "?"
-	}
-
 	if params.Pair != "" {
 		query.Add("pair", fmt.Sprint(params.Pair))
 	}
@@ -76,12 +73,12 @@ func (api *APIImpl) GetTrades(params entity.TradeParams) (entity.Trades, error) 
 		query.Add("order_id", fmt.Sprint(params.OrderId))
 	}
 
-	if params.Since != 0 {
-		query.Add("since", fmt.Sprint(params.Since))
+	if params.Since != nil {
+		query.Add("since", fmt.Sprint(params.Since.Unix()*1000))
 	}
 
-	if params.End != 0 {
-		query.Add("end", fmt.Sprint(params.End))
+	if params.End != nil {
+		query.Add("end", fmt.Sprint(params.Since.Unix()*1000))
 	}
 
 	if params.Order != "" {
@@ -91,7 +88,7 @@ func (api *APIImpl) GetTrades(params entity.TradeParams) (entity.Trades, error) 
 	bytes, err := api.client.request(&clientOption{
 		endpoint: privateApiEndpoint,
 		method:   http.MethodGet,
-		path:     path + query.Encode(),
+		path:     path + "?" + query.Encode(),
 		header:   header,
 	})
 
@@ -100,7 +97,10 @@ func (api *APIImpl) GetTrades(params entity.TradeParams) (entity.Trades, error) 
 	}
 
 	res := new(tradesResponse)
-	json.Unmarshal(bytes, res)
+	err = json.Unmarshal(bytes, res)
+	if err != nil {
+		return nil, err
+	}
 
 	err = res.parseError()
 	if err != nil {
