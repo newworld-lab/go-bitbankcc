@@ -26,6 +26,7 @@ const (
 	formatTransactions    = "/%s/transactions/%s"
 	formatCandlestick     = "/%s/candlestick/%s/%s"
 	formatAssets          = "/v1/user/assets"
+	formatTrades          = "v1/user/spot/trade_history"
 	formatAccessSignature = "%d%s%s"
 )
 
