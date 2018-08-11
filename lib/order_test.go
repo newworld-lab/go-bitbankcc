@@ -52,6 +52,49 @@ func TestGetOrder(t *testing.T) {
 	assert.Equal(t, 1000.0, order.Price)
 }
 
+func TestGetOrders(t *testing.T) {
+	key := "key"
+	secret := "secret"
+
+	ctrl := gomock.NewController(t)
+	client := NewMockclient(ctrl)
+
+	client.EXPECT().request(&clientOption{
+		endpoint: privateApiEndpoint,
+		method:   http.MethodGet,
+		path:     "/v1/user/spot/active_orders?pair=btc_jpy",
+		header: http.Header{
+			"ACCESS-KEY":       {"key"},
+			"ACCESS-NONCE":     {"1531539009441"},
+			"ACCESS-SIGNATURE": {"f7ac80894ac0a249fa7845429d864ec151f238e97858339192c3e4cdb75ef2aa"},
+		},
+	}).Return(
+		[]byte(`{"success":1,"data":{"orders":[{"order_id":444134158,"pair":"btc_jpy","side":"buy","type":"limit","start_amount":"0.00100000","remaining_amount":"0.00100000","executed_amount":"0.00000000","price":"1000.0000","average_price":"0.0000","ordered_at":1533044000829,"status":"UNFILLED"}]}}`),
+		nil,
+	)
+
+	api := &APIImpl{
+		client: client,
+		option: &APIOption{
+			ApiKey:    &key,
+			ApiSecret: &secret,
+		},
+		createAccessNonce: func() int {
+			return 1531539009441
+		},
+	}
+
+	orders, err := api.GetActiveOrders(entity.GetActiveOrdersParams{
+		Pair: entity.PairBtcJpy,
+	})
+
+	assert.Nil(t, err)
+	assert.NotNil(t, orders)
+	assert.Equal(t, 444134158, orders[0].OrderID)
+	assert.Equal(t, 0.001, orders[0].StartAmount)
+	assert.Equal(t, 1000.0, orders[0].Price)
+}
+
 func TestPostOrder(t *testing.T) {
 	key := "key"
 	secret := "secret"
