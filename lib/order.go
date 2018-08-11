@@ -297,3 +297,47 @@ func (api *APIImpl) PostCancelOrders(params entity.PostCancelOrdersParams) (enti
 
 	return res.Data.convert(), nil
 }
+
+func (api *APIImpl) PostOrdersInfo(params entity.PostOrdersInfoParams) (entity.Orders, error) {
+	if api == nil {
+		return nil, errors.New("api is nil")
+	}
+
+	if api.option == nil || api.option.ApiKey == nil || api.option.ApiSecret == nil {
+		return nil, errors.New("ApiKey or ApiSecret is nil")
+	}
+	path := formatOrdersInfo
+
+	body, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+
+	header, err := api.createCertificationHeader(string(body))
+	if err != nil {
+		return nil, err
+	}
+
+	bytes, err := api.client.request(&clientOption{
+		endpoint: privateApiEndpoint,
+		method:   http.MethodPost,
+		path:     path,
+		header:   header,
+		body:     body,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	res := new(ordersResponse)
+	err = json.Unmarshal(bytes, res)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.Success != 1 {
+		return nil, errors.Errorf("api error code=%d", res.Data.Code)
+	}
+
+	return res.Data.convert(), nil
+}

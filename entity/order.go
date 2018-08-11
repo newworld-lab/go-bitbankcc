@@ -76,3 +76,8 @@ type PostCancelOrdersParams struct {
 	Pair     TypePair `json:"pair"`
 	OrderIDs []int    `json:"order_ids"`
 }
+
+type PostOrdersInfoParams struct {
+	Pair     TypePair `json:"pair"`
+	OrderIDs []int    `json:"order_ids"`
+}
