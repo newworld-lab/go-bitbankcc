@@ -28,6 +28,7 @@ const (
 	formatAssets          = "/v1/user/assets"
 	formatOrder           = "/v1/user/spot/order"
 	formatAccessSignature = "%d%s%s"
+	formatWithdraw        = "/v1/user/withdrawal_account?asset=%s"
 )
 
 type baseData struct {
@@ -57,6 +58,7 @@ type API interface {
 	GetTransactions(pair entity.TypePair, time *time.Time) (*entity.Transaction, error)
 	GetCandlestick(pair entity.TypePair, candle TypeCandle, time time.Time) (entity.Candlestick, error)
 	GetAssets() (entity.Assets, error)
+	GetWithdraw(asset entity.TypeAsset) (*entity.Accounts, error)
 }
 
 type APIImpl struct {
