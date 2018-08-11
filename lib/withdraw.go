@@ -26,7 +26,7 @@ func (as accounts) convert() entity.Accounts {
 	accounts := make(entity.Accounts, 0)
 	for _, a := range as {
 		accounts = append(accounts, entity.Account{
-			Uuid:    a.Account.Uuid,
+			UUID:    a.Account.UUID,
 			Label:   a.Account.Label,
 			Address: a.Account.Address,
 		})

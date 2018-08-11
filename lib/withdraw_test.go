@@ -42,7 +42,7 @@ func TestGetWithdraw(t *testing.T) {
 	accounts, err := api.GetWithdraw(entity.AssetBtc)
 	assert.Nil(t, err)
 	assert.NotNil(t, accounts)
-	assert.Equal(t, accounts[0].Uuid, "3aba1510-8cab-11e8-xxxx-yyyyyyyyyyyy")
+	assert.Equal(t, accounts[0].UUID, "3aba1510-8cab-11e8-xxxx-yyyyyyyyyyyy")
 	assert.Equal(t, accounts[0].Label, "bitpay")
 	assert.Equal(t, accounts[0].Address, "asdfghjkl1234567890")
 }
