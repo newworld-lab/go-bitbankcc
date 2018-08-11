@@ -43,7 +43,7 @@ func TestGetOrder(t *testing.T) {
 
 	order, err := api.GetOrder(entity.GetOrderParams{
 		Pair:    entity.PairBtcJpy,
-		OrderID: "444134158",
+		OrderID: 444134158,
 	})
 	assert.Nil(t, err)
 	assert.NotNil(t, order)
@@ -138,6 +138,50 @@ func TestPostOrder(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, order)
 	assert.Equal(t, 444112806, order.OrderID)
+	assert.Equal(t, 0.001, order.StartAmount)
+	assert.Equal(t, 1000.0, order.Price)
+}
+
+func TestPostCancelOrder(t *testing.T) {
+	key := "key"
+	secret := "secret"
+	ctrl := gomock.NewController(t)
+	client := NewMockclient(ctrl)
+
+	client.EXPECT().request(&clientOption{
+		endpoint: privateApiEndpoint,
+		method:   http.MethodPost,
+		path:     "/v1/user/spot/cancel_order",
+		header: http.Header{
+			"ACCESS-KEY":       {"key"},
+			"ACCESS-NONCE":     {"1531539009441"},
+			"ACCESS-SIGNATURE": {"cb128b2ecdbfe4d5c51cbb54d3dcdce272dc9854f21edc54ba35126116e0a4f3"},
+		},
+		body: []byte(`{"pair":"btc_jpy","order_id":444134158}`),
+	}).Return(
+		[]byte(`{"success":1,"data":{"order_id":444134158,"pair":"btc_jpy","side":"buy","type":"limit","start_amount":"0.00100000","remaining_amount":"0.00100000","executed_amount":"0.00000000","price":"1000.0000","average_price":"0.0000","ordered_at":1533041753546,"status":"UNFILLED"}}`),
+		nil,
+	)
+
+	api := &APIImpl{
+		client: client,
+		option: &APIOption{
+			ApiKey:    &key,
+			ApiSecret: &secret,
+		},
+		createAccessNonce: func() int {
+			return 1531539009441
+		},
+	}
+
+	order, err := api.PostCancelOrder(entity.PostCancelOrderParams{
+		Pair:    entity.PairBtcJpy,
+		OrderID: 444134158,
+	})
+
+	assert.Nil(t, err)
+	assert.NotNil(t, order)
+	assert.Equal(t, 444134158, order.OrderID)
 	assert.Equal(t, 0.001, order.StartAmount)
 	assert.Equal(t, 1000.0, order.Price)
 }

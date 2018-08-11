@@ -47,7 +47,7 @@ type Order struct {
 
 type GetOrderParams struct {
 	Pair    TypePair `json:"pair"`
-	OrderID string   `json:"order_id"`
+	OrderID int      `json:"order_id"`
 }
 
 type GetActiveOrdersParams struct {
@@ -65,4 +65,9 @@ type PostOrderParams struct {
 	Price  int           `json:"price"`
 	Side   TypeOrderSide `json:"side"`
 	Type   TypeOrderType `json:"type"`
+}
+
+type PostCancelOrderParams struct {
+	Pair    TypePair `json:"pair"`
+	OrderID int      `json:"order_id"`
 }

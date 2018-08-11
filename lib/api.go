@@ -29,6 +29,7 @@ const (
 	formatTrades          = "/v1/user/spot/trade_history"
 	formatOrder           = "/v1/user/spot/order"
 	formatActiveOrders    = "/v1/user/spot/active_orders"
+	formatCancelOrder     = "/v1/user/spot/cancel_order"
 	formatAccessSignature = "%d%s%s"
 	formatWithdraw        = "/v1/user/withdrawal_account?asset=%s"
 )
