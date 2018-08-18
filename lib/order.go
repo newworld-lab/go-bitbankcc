@@ -11,6 +11,14 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatOrder        = "/v1/user/spot/order"
+	formatActiveOrders = "/v1/user/spot/active_orders"
+	formatCancelOrder  = "/v1/user/spot/cancel_order"
+	formatCancelOrders = "/v1/user/spot/cancel_orders"
+	formatOrdersInfo   = "/v1/user/spot/orders_info"
+)
+
 type orderResponse struct {
 	baseResponse
 	Data order `json:"data"`

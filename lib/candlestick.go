@@ -11,6 +11,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatCandlestick = "/%s/candlestick/%s/%s"
+)
+
 type TypeCandle string
 
 const (

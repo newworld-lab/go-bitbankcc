@@ -10,6 +10,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatDepth = "/%s/depth"
+)
+
 type depth struct {
 	entity.Depth
 	Asks [][]string `json:"asks"`

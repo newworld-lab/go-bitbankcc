@@ -9,6 +9,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatWithdraw = "/v1/user/withdrawal_account?asset=%s"
+)
+
 type withdrawResponse struct {
 	baseResponse
 	Data struct {

@@ -10,6 +10,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatTransactionsAll = "/%s/transactions"
+	formatTransactions    = "/%s/transactions/%s"
+)
+
 type transactionsResponse struct {
 	baseResponse
 	Data struct {

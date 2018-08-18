@@ -9,6 +9,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatTicker = "/%s/ticker"
+)
+
 type tickerResponse struct {
 	baseResponse
 	Data struct {

@@ -20,20 +20,7 @@ const (
 )
 
 const (
-	formatTicker          = "/%s/ticker"
-	formatDepth           = "/%s/depth"
-	formatTransactionsAll = "/%s/transactions"
-	formatTransactions    = "/%s/transactions/%s"
-	formatCandlestick     = "/%s/candlestick/%s/%s"
-	formatAssets          = "/v1/user/assets"
-	formatTrades          = "/v1/user/spot/trade_history"
-	formatOrder           = "/v1/user/spot/order"
-	formatActiveOrders    = "/v1/user/spot/active_orders"
-	formatCancelOrder     = "/v1/user/spot/cancel_order"
-	formatCancelOrders    = "/v1/user/spot/cancel_orders"
-	formatOrdersInfo      = "/v1/user/spot/orders_info"
 	formatAccessSignature = "%d%s%s"
-	formatWithdraw        = "/v1/user/withdrawal_account?asset=%s"
 )
 
 type baseData struct {

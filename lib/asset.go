@@ -9,6 +9,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatAssets = "/v1/user/assets"
+)
+
 type assetsResponse struct {
 	baseResponse
 	Data struct {

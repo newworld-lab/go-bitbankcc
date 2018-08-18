@@ -11,6 +11,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatTrades = "/v1/user/spot/trade_history"
+)
+
 type tradesResponse struct {
 	baseResponse
 	Data struct {
