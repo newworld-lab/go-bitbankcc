@@ -48,5 +48,66 @@ func TestGetWithdraw(t *testing.T) {
 }
 
 func TestPostRequestWithdraw(t *testing.T) {
+	key := "key"
+	secret := "secret"
+	ctrl := gomock.NewController(t)
+	client := NewMockclient(ctrl)
 
+	client.EXPECT().request(&clientOption{
+		endpoint: privateApiEndpoint,
+		method:   http.MethodPost,
+		path:     "/v1/user/request_withdrawal",
+		header: http.Header{
+			"ACCESS-KEY":       {"key"},
+			"ACCESS-NONCE":     {"1531539009441"},
+			"ACCESS-SIGNATURE": {"c46ac3162004a9fe13ac4fcb0771a49e10e4ccd99ce723b0c94ac67197637159"},
+		},
+		body: []byte(`{"asset":"btc","uuid":"12345","amount":"10","opt_token":"tokenxxx","sms_token":""}`),
+	}).Return(
+		[]byte(`{"success":1,"data":{"uuid":"1234","asset":"btc","amount":"10","account_uuid":"ssss","fee":"1234","status":"ffff","label":"gggg","txid":"hhhh","address":"jjjj","request_at":1526256003458}}`),
+		nil,
+	)
+
+	api := &APIImpl{
+		client: client,
+		option: &APIOption{
+			ApiKey:    &key,
+			ApiSecret: &secret,
+		},
+		createAccessNonce: func() int {
+			return 1531539009441
+		},
+	}
+
+	withdraw, err := api.PostRequestWithdraw(entity.PostWithdrawParams{
+		Asset:    entity.AssetBtc,
+		UUID:     "12345",
+		Amount:   10,
+		OptToken: "tokenxxx",
+		SmsToken: "",
+	})
+
+	assert.Nil(t, err)
+	assert.NotNil(t, withdraw)
+	assert.Equal(t, "1234", withdraw.UUID)
+	assert.Equal(t, entity.AssetBtc, withdraw.Asset)
+	assert.Equal(t, "ssss", withdraw.AccountUUID)
+	assert.Equal(t, 10.0, withdraw.Amount)
+	assert.Equal(t, 1234.0, withdraw.Fee)
+	assert.Equal(t, "gggg", withdraw.Label)
+	assert.Equal(t, "jjjj", withdraw.Address)
+	assert.Equal(t, "hhhh", withdraw.Txid)
+	assert.Equal(t, "ffff", withdraw.Status)
+	assert.NotNil(t, withdraw.RequestedAt)
+
+	// UUID        string    `json:"uuid"`
+	// Asset       TypeAsset `json:"asset"`
+	// AccountUUID string    `json:"account_uuid"`
+	// Amount      float64   `json:"amount,string"`
+	// Fee         float64   `json:"fee,string"`
+	// Label       string    `json:"label"`
+	// Address     string    `json:"address"`
+	// Txid        string    `json:"txid"`
+	// Status      string    `json:"status"`
+	// RequestedAt time.Time `json:"requested_at"`
 }
