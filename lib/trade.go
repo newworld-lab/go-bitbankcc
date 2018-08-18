@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	time "time"
 
 	entity "github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/pkg/errors"
@@ -21,6 +22,7 @@ type trades []trade
 
 type trade struct {
 	entity.Trade
+	ExecutedAt int64 `json:"executed_at"`
 }
 
 func (tr trades) convert() entity.Trades {
@@ -37,7 +39,7 @@ func (tr trades) convert() entity.Trades {
 			MakerTaker:     t.Trade.MakerTaker,
 			FeeAmountBase:  t.Trade.FeeAmountBase,
 			FeeAmountQuote: t.Trade.FeeAmountQuote,
-			ExecuteAt:      t.Trade.ExecuteAt,
+			ExecutedAt:     time.Unix(int64(t.ExecutedAt)/1000, int64(t.ExecutedAt)%1000*1000000),
 		})
 	}
 	return trades
@@ -53,10 +55,6 @@ func (api *APIImpl) GetTrades(params entity.TradeParams) (entity.Trades, error) 
 	}
 
 	path := formatTrades
-	header, err := api.createCertificationHeader(path)
-	if err != nil {
-		return nil, err
-	}
 
 	url := &url.URL{}
 	query := url.Query()
@@ -85,10 +83,17 @@ func (api *APIImpl) GetTrades(params entity.TradeParams) (entity.Trades, error) 
 		query.Add("order", fmt.Sprint(params.Order))
 	}
 
+	path = path + "?" + query.Encode()
+
+	header, err := api.createCertificationHeader(path)
+	if err != nil {
+		return nil, err
+	}
+
 	bytes, err := api.client.request(&clientOption{
 		endpoint: privateApiEndpoint,
 		method:   http.MethodGet,
-		path:     path + "?" + query.Encode(),
+		path:     path,
 		header:   header,
 	})
 

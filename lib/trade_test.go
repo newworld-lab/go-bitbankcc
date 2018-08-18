@@ -29,14 +29,14 @@ func TestGetTrades(t *testing.T) {
 	client.EXPECT().request(&clientOption{
 		endpoint: privateApiEndpoint,
 		method:   http.MethodGet,
-		path:     "v1/user/spot/trade_history" + "?" + query.Encode(),
+		path:     "/v1/user/spot/trade_history" + "?" + query.Encode(),
 		header: http.Header{
 			"ACCESS-KEY":       {"key"},
 			"ACCESS-NONCE":     {"1532146131702"},
-			"ACCESS-SIGNATURE": {"7a80043409e092bc32b16f1fac5b6c5f111ab6b2854c7a5f66f2de4252030a91"},
+			"ACCESS-SIGNATURE": {"26319129a8187ef9bfb4fcee6b91c8d08937bff5fcc4cd44db128a6d8757249e"},
 		},
 	}).Return(
-		[]byte(`{"success": 1,"data":{"trades":[{"trade_id": 0,"pair": "btc_jpy","order_id":1,"side": "○○○","type": "○○○","amount": "○○○","price": "○○○","maker_taker": "○○○","fee_amount_base": "○○○","fee_amount_quote": "○○○","executed_at": 0}]}}`),
+		[]byte(`{"success": 1,"data":{"trades":[{"trade_id": 0,"pair": "btc_jpy","order_id":1,"side": "10","type": "○○○","amount": "10","price": "10","maker_taker": "○○○","fee_amount_base": "10","fee_amount_quote": "10","executed_at": 63662457900}]}}`),
 		nil,
 	)
 	api := &APIImpl{
@@ -70,12 +70,12 @@ func TestGetTrades(t *testing.T) {
 	assert.Equal(t, trades[0].TradeId, 0)
 	assert.Equal(t, trades[0].Pair, "btc_jpy")
 	assert.Equal(t, trades[0].OrderId, 1)
-	assert.Equal(t, trades[0].Side, "○○○")
+	assert.Equal(t, trades[0].Side, float64(10))
 	assert.Equal(t, trades[0].Type, "○○○")
-	assert.Equal(t, trades[0].Amount, "○○○")
-	assert.Equal(t, trades[0].Price, "○○○")
+	assert.Equal(t, trades[0].Amount, float64(10))
+	assert.Equal(t, trades[0].Price, float64(10))
 	assert.Equal(t, trades[0].MakerTaker, "○○○")
-	assert.Equal(t, trades[0].FeeAmountBase, "○○○")
-	assert.Equal(t, trades[0].FeeAmountQuote, "○○○")
-	assert.Equal(t, trades[0].ExecuteAt, 0)
+	assert.Equal(t, trades[0].FeeAmountBase, float64(10))
+	assert.Equal(t, trades[0].FeeAmountQuote, float64(10))
+	assert.Equal(t, trades[0].ExecutedAt, time.Unix(63662457900/1000, 63662457900%1000*1000000))
 }

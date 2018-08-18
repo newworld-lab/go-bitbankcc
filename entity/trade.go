@@ -12,17 +12,17 @@ const (
 )
 
 type Trade struct {
-	TradeId        int    `json:"trade_id"`
-	Pair           string `json:"pair"`
-	OrderId        int    `json:"order_id"`
-	Side           string `json:"side"`
-	Type           string `json:"type"`
-	Amount         string `json:"amount"`
-	Price          string `json:"price"`
-	MakerTaker     string `json:"maker_taker"`
-	FeeAmountBase  string `json:"fee_amount_base"`
-	FeeAmountQuote string `json:"fee_amount_quote"`
-	ExecuteAt      int    `json:"executed_at"`
+	TradeId        int       `json:"trade_id"`
+	Pair           string    `json:"pair"`
+	OrderId        int       `json:"order_id"`
+	Side           float64   `json:"side,string"`
+	Type           string    `json:"type"`
+	Amount         float64   `json:"amount,string"`
+	Price          float64   `json:"price,string"`
+	MakerTaker     string    `json:"maker_taker"`
+	FeeAmountBase  float64   `json:"fee_amount_base,string"`
+	FeeAmountQuote float64   `json:"fee_amount_quote,string"`
+	ExecutedAt     time.Time `json:"executed_at"`
 }
 
 type TradeParams struct {
