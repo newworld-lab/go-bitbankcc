@@ -53,9 +53,9 @@ func (as accounts) convert() entity.Accounts {
 }
 
 func (w *withdraw) requestConvert() *entity.Withdraw {
-	var requestAt time.Time
+	var requestedAt time.Time
 
-	requestAt = time.Unix(w.RequestedAt/1000, w.RequestedAt%1000*1000000)
+	requestedAt = time.Unix(w.RequestedAt/1000, w.RequestedAt%1000*1000000)
 
 	return &entity.Withdraw{
 		UUID:        w.UUID,
@@ -67,7 +67,7 @@ func (w *withdraw) requestConvert() *entity.Withdraw {
 		Address:     w.Address,
 		Txid:        w.Txid,
 		Status:      w.Status,
-		RequestedAt: requestAt,
+		RequestedAt: requestedAt,
 	}
 }
 
