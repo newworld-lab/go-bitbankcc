@@ -10,3 +10,14 @@ type Asset struct {
 	FreeAmount      float64     `json:"free_amount"`
 	WithDrawalFee   interface{} `json:"withdrawal_fee"`
 }
+
+type TypeAsset string
+
+const (
+	AssetBtc  TypeAsset = "btc"
+	AssetXrp  TypeAsset = "xrp"
+	AssetLtc  TypeAsset = "ltc"
+	AssetEth  TypeAsset = "eth"
+	AssetMona TypeAsset = "mona"
+	AssetBcc  TypeAsset = "bcc"
+)
