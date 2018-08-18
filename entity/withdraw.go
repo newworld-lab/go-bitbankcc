@@ -26,7 +26,7 @@ const (
 
 type Withdraw struct {
 	UUID        string    `json:"uuid"`
-	Asset       string    `json:"asset"`
+	Asset       TypeAsset `json:"asset"`
 	AccountUUID string    `json:"account_uuid"`
 	Amount      float64   `json:"amount,string"`
 	Fee         float64   `json:"fee,string"`
@@ -38,9 +38,9 @@ type Withdraw struct {
 }
 
 type PostWithdrawParams struct {
-	Pair   TypePair         `json:"pair"`
-	Amount float64          `json:"amount,string"`
-	Price  float64          `json:"price,string"`
-	Side   TypeWithdrawSide `json:"side"`
-	Type   TypeWithdrawType `json:"type"`
+	Asset    TypeAsset `json:"asset"`
+	UUID     string    `json:"uuid"`
+	Amount   float64   `json:"amount,string"`
+	OptToken string    `json:"opt_token"`
+	SmsToken string    `json:"smstoken"`
 }

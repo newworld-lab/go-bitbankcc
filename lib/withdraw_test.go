@@ -46,3 +46,7 @@ func TestGetWithdraw(t *testing.T) {
 	assert.Equal(t, accounts[0].Label, "bitpay")
 	assert.Equal(t, accounts[0].Address, "asdfghjkl1234567890")
 }
+
+func TestPostRequestWithdraw(t *testing.T) {
+
+}
