@@ -18,6 +18,7 @@ const (
 type tradesResponse struct {
 	baseResponse
 	Data struct {
+		baseData
 		Trades trades `json:"trades"`
 	} `json:"data"`
 }
@@ -111,9 +112,8 @@ func (api *APIImpl) GetTrades(params entity.TradeParams) (entity.Trades, error) 
 		return nil, err
 	}
 
-	err = res.parseError()
-	if err != nil {
-		return nil, err
+	if res.Success != 1 {
+		return nil, errors.Errorf("api error code=%d", res.Data.Code)
 	}
 
 	return res.Data.Trades.convert(), nil

@@ -16,6 +16,7 @@ const (
 type tickerResponse struct {
 	baseResponse
 	Data struct {
+		baseData
 		entity.Ticker
 	} `json:"data"`
 }
@@ -35,11 +36,13 @@ func (api *APIImpl) GetTicker(pair entity.TypePair) (*entity.Ticker, error) {
 	}
 
 	res := new(tickerResponse)
-	json.Unmarshal(bytes, res)
-
-	err = res.parseError()
+	err = json.Unmarshal(bytes, res)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
+	}
+
+	if res.Success != 1 {
+		return nil, errors.Errorf("api error code=%d", res.Data.Code)
 	}
 
 	return &res.Data.Ticker, nil

@@ -32,18 +32,6 @@ type baseResponse struct {
 	Data    baseData `json:"data"`
 }
 
-func (res *baseResponse) parseError() error {
-	if res == nil {
-		return errors.New("res is nil")
-	}
-
-	if res.Success != 1 {
-		return errors.Errorf("api error code=%d", res.Data.Code)
-	}
-
-	return nil
-}
-
 type API interface {
 	GetTicker(pair entity.TypePair) (*entity.Ticker, error)
 	GetDepth(pair entity.TypePair) (*entity.Depth, error)
