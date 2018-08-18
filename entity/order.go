@@ -28,6 +28,8 @@ const (
 	OrderTypeMarket TypeOrderType = "market"
 )
 
+type Orders []Order
+
 type Order struct {
 	OrderID         int             `json:"order_id"`
 	Pair            TypePair        `json:"pair"`
@@ -43,10 +45,39 @@ type Order struct {
 	Status          TypeOrderStatus `json:"status"`
 }
 
+type GetOrderParams struct {
+	Pair    TypePair `json:"pair"`
+	OrderID int      `json:"order_id"`
+}
+
+type GetActiveOrdersParams struct {
+	Pair   TypePair   `json:"pair"`
+	Count  float64    `json:"count"`
+	FromID string     `json:"from_id"`
+	EndID  string     `json:"to_id"`
+	Since  *time.Time `json:"since"`
+	End    *time.Time `json:"end"`
+}
+
 type PostOrderParams struct {
 	Pair   TypePair      `json:"pair"`
 	Amount float64       `json:"amount,string"`
-	Price  int           `json:"price"`
+	Price  float64       `json:"price"`
 	Side   TypeOrderSide `json:"side"`
 	Type   TypeOrderType `json:"type"`
+}
+
+type PostCancelOrderParams struct {
+	Pair    TypePair `json:"pair"`
+	OrderID int      `json:"order_id"`
+}
+
+type PostCancelOrdersParams struct {
+	Pair     TypePair `json:"pair"`
+	OrderIDs []int    `json:"order_ids"`
+}
+
+type PostOrdersInfoParams struct {
+	Pair     TypePair `json:"pair"`
+	OrderIDs []int    `json:"order_ids"`
 }
