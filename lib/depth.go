@@ -10,6 +10,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatDepth = "/%s/depth"
+)
+
 type depth struct {
 	entity.Depth
 	Asks [][]string `json:"asks"`
@@ -19,6 +23,7 @@ type depth struct {
 type depthResponse struct {
 	baseResponse
 	Data struct {
+		baseData
 		depth
 	} `json:"data"`
 }
@@ -62,10 +67,13 @@ func (api *APIImpl) GetDepth(pair entity.TypePair) (*entity.Depth, error) {
 	}
 
 	res := new(depthResponse)
-	json.Unmarshal(bytes, res)
-	err = res.parseError()
+	err = json.Unmarshal(bytes, res)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
+	}
+
+	if res.Success != 1 {
+		return nil, errors.Errorf("api error code=%d", res.Data.Code)
 	}
 
 	depth := res.Data.convert()

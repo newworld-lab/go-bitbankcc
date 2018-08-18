@@ -97,3 +97,16 @@ func (m *MockAPI) GetAssets() (entity.Assets, error) {
 func (mr *MockAPIMockRecorder) GetAssets() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAssets", reflect.TypeOf((*MockAPI)(nil).GetAssets))
 }
+
+// GetWithdraw mocks base method
+func (m *MockAPI) GetWithdraw(asset entity.TypeAsset) (*entity.Accounts, error) {
+	ret := m.ctrl.Call(m, "GetWithdraw", asset)
+	ret0, _ := ret[0].(*entity.Accounts)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetWithdraw indicates an expected call of GetWithdraw
+func (mr *MockAPIMockRecorder) GetWithdraw(asset interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWithdraw", reflect.TypeOf((*MockAPI)(nil).GetWithdraw), asset)
+}

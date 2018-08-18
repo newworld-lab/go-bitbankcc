@@ -9,9 +9,14 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatWithdraw = "/v1/user/withdrawal_account?asset=%s"
+)
+
 type withdrawResponse struct {
 	baseResponse
 	Data struct {
+		baseData
 		Accounts accounts `json:"accounts"`
 	} `json:"data"`
 }
@@ -63,11 +68,13 @@ func (api *APIImpl) GetWithdraw(asset entity.TypeAsset) (entity.Accounts, error)
 	}
 
 	res := new(withdrawResponse)
-	json.Unmarshal(bytes, res)
-
-	err = res.parseError()
+	err = json.Unmarshal(bytes, res)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
+	}
+
+	if res.Success != 1 {
+		return nil, errors.Errorf("api error code=%d", res.Data.Code)
 	}
 
 	return res.Data.Accounts.convert(), nil

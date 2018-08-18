@@ -10,9 +10,15 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	formatTransactionsAll = "/%s/transactions"
+	formatTransactions    = "/%s/transactions/%s"
+)
+
 type transactionsResponse struct {
 	baseResponse
 	Data struct {
+		baseData
 		Transactions transactions `json:"transactions"`
 	} `json:"data"`
 }
@@ -60,11 +66,13 @@ func (api *APIImpl) GetTransactions(pair entity.TypePair, t *time.Time) (entity.
 	}
 
 	res := new(transactionsResponse)
-	json.Unmarshal(bytes, res)
-
-	err = res.parseError()
+	err = json.Unmarshal(bytes, res)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
+	}
+
+	if res.Success != 1 {
+		return nil, errors.Errorf("api error code=%d", res.Data.Code)
 	}
 
 	return res.Data.Transactions.convert(), nil
