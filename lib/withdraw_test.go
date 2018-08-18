@@ -99,15 +99,4 @@ func TestPostRequestWithdraw(t *testing.T) {
 	assert.Equal(t, "hhhh", withdraw.Txid)
 	assert.Equal(t, "ffff", withdraw.Status)
 	assert.NotNil(t, withdraw.RequestedAt)
-
-	// UUID        string    `json:"uuid"`
-	// Asset       TypeAsset `json:"asset"`
-	// AccountUUID string    `json:"account_uuid"`
-	// Amount      float64   `json:"amount,string"`
-	// Fee         float64   `json:"fee,string"`
-	// Label       string    `json:"label"`
-	// Address     string    `json:"address"`
-	// Txid        string    `json:"txid"`
-	// Status      string    `json:"status"`
-	// RequestedAt time.Time `json:"requested_at"`
 }
