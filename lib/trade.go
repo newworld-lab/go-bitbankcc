@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	time "time"
+	"time"
 
-	entity "github.com/newworld-lab/go-bitbankcc/entity"
+	"github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/pkg/errors"
 )
 

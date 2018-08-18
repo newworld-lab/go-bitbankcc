@@ -7,7 +7,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	entity "github.com/newworld-lab/go-bitbankcc/entity"
+	"github.com/newworld-lab/go-bitbankcc/entity"
 )
 
 func TestGetOrder(t *testing.T) {

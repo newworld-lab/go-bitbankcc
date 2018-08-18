@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	time "time"
+	"time"
 
-	entity "github.com/newworld-lab/go-bitbankcc/entity"
+	"github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/pkg/errors"
 )
 
