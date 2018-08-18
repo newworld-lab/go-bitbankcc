@@ -62,7 +62,7 @@ type GetActiveOrdersParams struct {
 type PostOrderParams struct {
 	Pair   TypePair      `json:"pair"`
 	Amount float64       `json:"amount,string"`
-	Price  int           `json:"price"`
+	Price  float64       `json:"price"`
 	Side   TypeOrderSide `json:"side"`
 	Type   TypeOrderType `json:"type"`
 }
