@@ -123,7 +123,7 @@ func (api *APIImpl) GetActiveOrders(params entity.GetActiveOrdersParams) (entity
 	query := url.Query()
 	query.Add("pair", string(params.Pair))
 	if params.Count != 0 {
-		query.Add("count", strconv.Itoa(params.Count))
+		query.Add("count", strconv.FormatFloat(params.Count, 'f', -1, 10))
 	}
 	if params.FromID != "" {
 		query.Add("from_id", params.FromID)

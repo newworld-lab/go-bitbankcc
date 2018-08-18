@@ -52,7 +52,7 @@ type GetOrderParams struct {
 
 type GetActiveOrdersParams struct {
 	Pair   TypePair   `json:"pair"`
-	Count  int        `json:"count"`
+	Count  float64    `json:"count"`
 	FromID string     `json:"from_id"`
 	EndID  string     `json:"to_id"`
 	Since  *time.Time `json:"since"`
