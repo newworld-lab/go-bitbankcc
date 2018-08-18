@@ -100,7 +100,7 @@ func (api *APIImpl) GetWithdraw(asset entity.TypeAsset) (entity.Accounts, error)
 	}
 
 	res := new(withdrawAccountResponse)
-	json.Unmarshal(bytes, res)
+	err = json.Unmarshal(bytes, res)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

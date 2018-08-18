@@ -42,5 +42,5 @@ type PostWithdrawParams struct {
 	UUID     string    `json:"uuid"`
 	Amount   float64   `json:"amount,string"`
 	OptToken string    `json:"opt_token"`
-	SmsToken string    `json:"smstoken"`
+	SmsToken string    `json:"sms_token"`
 }
