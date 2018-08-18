@@ -10,15 +10,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-<<<<<<< HEAD
 const (
-	formatWithdraw = "/v1/user/withdrawal_account?asset=%s"
+	formatWithdraw        = "/v1/user/withdrawal_account?asset=%s"
+	formatRequestWithdraw = "/v1/user/request_withdrawal"
 )
 
-type withdrawResponse struct {
-=======
 type withdrawAccountResponse struct {
->>>>>>> add request withdraw
 	baseResponse
 	Data struct {
 		baseData

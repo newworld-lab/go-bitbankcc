@@ -21,11 +21,6 @@ const (
 
 const (
 	formatAccessSignature = "%d%s%s"
-<<<<<<< HEAD
-=======
-	formatWithdraw        = "/v1/user/withdrawal_account?asset=%s"
-	formatRequestWithdraw = "/v1/user/request_withdrawal"
->>>>>>> add request withdraw
 )
 
 type baseData struct {
