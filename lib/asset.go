@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	entity "github.com/newworld-lab/go-bitbankcc/entity"
+	"github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/pkg/errors"
 )
 

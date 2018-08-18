@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
-	time "time"
+	"time"
 
 	gomock "github.com/golang/mock/gomock"
-	entity "github.com/newworld-lab/go-bitbankcc/entity"
+	"github.com/newworld-lab/go-bitbankcc/entity"
 	"github.com/stretchr/testify/assert"
 )
 
