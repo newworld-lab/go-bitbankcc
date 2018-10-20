@@ -38,7 +38,9 @@ func (c *clientImpl) request(option *clientOption) ([]byte, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	req.Header = option.header
+	if option.header != nil {
+		req.Header = option.header
+	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
